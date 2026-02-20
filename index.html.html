@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Business Systems Audit</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080c14;
+    --surface: #0e1521;
+    --card: #131e2e;
+    --border: #1e3050;
+    --accent: #00e5a0;
+    --accent2: #0ea5e9;
+    --warn: #f59e0b;
+    --danger: #ef4444;
+    --text: #e2e8f0;
+    --muted: #64748b;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0 0 80px;
+  }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(135deg, #080c14 0%, #0a1628 60%, #06121f 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 60px 40px 50px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(0,229,160,0.07) 0%, transparent 70%);
+    top: -200px; left: 50%; transform: translateX(-50%);
+    pointer-events: none;
+  }
+  .badge {
+    display: inline-block;
+    background: rgba(0,229,160,0.1);
+    border: 1px solid rgba(0,229,160,0.3);
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border-radius: 100px;
+    margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #fff 30%, var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero p {
+    color: var(--muted);
+    font-size: 16px;
+    max-width: 520px;
+    margin: 0 auto 32px;
+    line-height: 1.7;
+  }
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+  .stat { text-align: center; }
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .stat-label { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  /* Progress bar */
+  .progress-bar-wrap {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(8,12,20,0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 40px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .progress-bar-track {
+    flex: 1;
+    height: 4px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    border-radius: 4px;
+    transition: width 0.3s ease;
+    width: 0%;
+  }
+  .progress-label { font-size: 13px; color: var(--muted); white-space: nowrap; }
+
+  /* Form */
+  .form-wrap {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 40px 24px 0;
+  }
+
+  .section-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-bottom: 28px;
+    overflow: hidden;
+    animation: fadeUp 0.5s ease both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-header {
+    padding: 24px 28px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .section-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .section-desc { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
+  .section-body { padding: 20px 28px; }
+
+  .question {
+    padding: 18px 0;
+    border-bottom: 1px solid rgba(30,48,80,0.5);
+  }
+  .question:last-child { border-bottom: none; }
+
+  .q-label {
+    font-size: 14px;
+    color: #cbd5e1;
+    margin-bottom: 14px;
+    line-height: 1.5;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .q-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+    background: rgba(0,229,160,0.1);
+    border-radius: 4px;
+    padding: 2px 7px;
+    margin-top: 1px;
+    flex-shrink: 0;
+  }
+
+  .slider-wrap {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .range-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    flex: 1;
+    height: 6px;
+    border-radius: 6px;
+    background: var(--border);
+    outline: none;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    border: 3px solid var(--bg);
+    box-shadow: 0 0 8px rgba(0,229,160,0.4);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 0 16px rgba(0,229,160,0.6);
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    border: 3px solid var(--bg);
+  }
+
+  .score-bubble {
+    min-width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  /* CTA Button */
+  .cta-wrap {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  .cta-btn {
+    width: 100%;
+    padding: 20px;
+    font-family: 'Syne', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    color: #000;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+    box-shadow: 0 8px 30px rgba(0,229,160,0.25);
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0,229,160,0.4);
+  }
+  .cta-btn:active { transform: translateY(0); }
+  .cta-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0);
+    transition: background 0.2s;
+  }
+  .cta-btn:hover::after { background: rgba(255,255,255,0.05); }
+
+  /* Results */
+  .results-wrap {
+    max-width: 860px;
+    margin: 36px auto 0;
+    padding: 0 24px;
+    display: none;
+  }
+
+  .results-hero {
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    margin-bottom: 28px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .result-score-ring {
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px;
+    flex-direction: column;
+    position: relative;
+  }
+  .result-score-ring svg {
+    position: absolute;
+    inset: 0;
+    transform: rotate(-90deg);
+  }
+  .ring-bg { fill: none; stroke: var(--border); stroke-width: 6; }
+  .ring-fill {
+    fill: none;
+    stroke-width: 6;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1.2s cubic-bezier(0.4,0,0.2,1);
+  }
+  .ring-inner {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+  }
+  .ring-pct {
+    font-family: 'Syne', sans-serif;
+    font-size: 26px;
+    font-weight: 800;
+  }
+  .ring-lbl { font-size: 10px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+
+  .results-hero h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 26px;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+  .results-hero p { color: var(--muted); font-size: 15px; max-width: 480px; margin: 0 auto; line-height: 1.6; }
+
+  .results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .result-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+  }
+  .result-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .result-card-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .result-card-score {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 6px;
+  }
+  .mini-bar-track {
+    height: 6px;
+    background: var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .mini-bar-fill {
+    height: 100%;
+    border-radius: 6px;
+    transition: width 1s ease;
+  }
+  .result-card-status {
+    font-size: 12px;
+    margin-top: 8px;
+  }
+
+  /* Recommendations */
+  .recs-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 28px;
+  }
+  .recs-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+  }
+  .recs-body { padding: 20px 24px; }
+  .rec-item {
+    display: flex;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(30,48,80,0.5);
+  }
+  .rec-item:last-child { border-bottom: none; }
+  .rec-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .rec-text h4 { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .rec-text p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  .restart-btn {
+    width: 100%;
+    padding: 16px;
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .restart-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* Color helpers */
+  .green { color: var(--accent); }
+  .yellow { color: var(--warn); }
+  .red { color: var(--danger); }
+  .bg-green { background: rgba(0,229,160,0.12); }
+  .bg-yellow { background: rgba(245,158,11,0.12); }
+  .bg-red { background: rgba(239,68,68,0.12); }
+
+  @media (max-width: 600px) {
+    .hero { padding: 40px 20px 36px; }
+    .section-header, .section-body { padding: 16px 18px; }
+    .results-hero { padding: 28px 20px; }
+    .hero-stats { gap: 24px; }
+    .progress-bar-wrap { padding: 10px 20px; }
+    .form-wrap, .cta-wrap, .results-wrap { padding: 0 16px; }
+    .form-wrap { padding-top: 28px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="badge">Free Assessment</div>
+  <h1>Business Systems Audit</h1>
+  <p>Discover exactly where your business is leaking time, money, and growth — and what to fix first.</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">25</div><div class="stat-label">Questions</div></div>
+    <div class="stat"><div class="stat-num">5</div><div class="stat-label">Categories</div></div>
+    <div class="stat"><div class="stat-num">~5</div><div class="stat-label">Minutes</div></div>
+  </div>
+</div>
+
+<!-- Sticky progress -->
+<div class="progress-bar-wrap">
+  <div class="progress-bar-track"><div class="progress-bar-fill" id="progressFill"></div></div>
+  <div class="progress-label" id="progressLabel">0 / 25</div>
+</div>
+
+<!-- Form -->
+<div class="form-wrap">
+  <form id="auditForm"></form>
+</div>
+
+<!-- CTA -->
+<div class="cta-wrap" style="margin-top:28px;">
+  <button class="cta-btn" onclick="calculateScore(event)">
+    → Get My Audit Results
+  </button>
+</div>
+
+<!-- Results -->
+<div class="results-wrap" id="resultsWrap">
+  <div class="results-hero" id="resultsHero">
+    <div class="result-score-ring" id="scoreRing">
+      <svg viewBox="0 0 120 120">
+        <circle class="ring-bg" cx="60" cy="60" r="52"/>
+        <circle class="ring-fill" id="ringFill" cx="60" cy="60" r="52"
+          stroke-dasharray="326.7"
+          stroke-dashoffset="326.7"/>
+      </svg>
+      <div class="ring-inner">
+        <div class="ring-pct" id="ringPct">0%</div>
+        <div class="ring-lbl">Risk</div>
+      </div>
+    </div>
+    <h2 id="resultHeadline"></h2>
+    <p id="resultSummary"></p>
+  </div>
+
+  <div class="results-grid" id="resultsGrid"></div>
+
+  <div class="recs-card">
+    <div class="recs-header">📋 Your Personalised Recommendations</div>
+    <div class="recs-body" id="recsBody"></div>
+  </div>
+
+  <button class="restart-btn" onclick="restart()">↩ Retake the Audit</button>
+</div>
+
+<script>
+const sections = {
+  "Founder Dependency": {
+    icon: "🔒", color: "#f472b6",
+    desc: "How much the business relies on you personally",
+    questions: [
+      "If you stepped away for 30 days, how severely would operations break down?",
+      "How dependent is the business on your daily decisions?",
+      "How often does your team get blocked waiting for you?",
+      "How undocumented are your key processes?",
+      "How likely is revenue to drop without you?"
+    ]
+  },
+  "Systems & Process Clarity": {
+    icon: "⚙️", color: "#60a5fa",
+    desc: "How clear and repeatable your core operations are",
+    questions: [
+      "How unclear is your client journey from lead to delivery?",
+      "How inconsistent is your onboarding experience?",
+      "How inconsistent is your service or product delivery?",
+      "How often do the same mistakes repeat?",
+      "How hard would it be for a new hire to operate using your SOPs?"
+    ]
+  },
+  "Delegation & Team Structure": {
+    icon: "👥", color: "#a78bfa",
+    desc: "How effectively your team operates without you",
+    questions: [
+      "How unclear are your team roles and responsibilities?",
+      "How much do team members rely on you for decisions?",
+      "How disorganised is your task handover process?",
+      "How often are tasks redone or corrected after completion?",
+      "How involved are you in work your team should fully own?"
+    ]
+  },
+  "Automation & Efficiency": {
+    icon: "⚡", color: "#34d399",
+    desc: "How much manual effort your business still runs on",
+    questions: [
+      "How many repetitive tasks are still done manually?",
+      "How manual is your client onboarding process?",
+      "How manual is your lead follow-up and nurture process?",
+      "How fragmented and disconnected is your tech stack?",
+      "How reliant are you on manual reminders instead of automated workflows?"
+    ]
+  },
+  "Scalability & Growth Ceiling": {
+    icon: "📈", color: "#fbbf24",
+    desc: "How ready the business is to grow without breaking",
+    questions: [
+      "How much is your growth limited by your personal time?",
+      "How much would stress and chaos increase if revenue doubled?",
+      "How inconsistent is your KPI and performance tracking?",
+      "How unprepared are you to handle 2x your current clients?",
+      "How often do you feel reactive rather than strategically in control?"
+    ]
+  }
+};
+
+let questionCount = 0;
+const qMap = [];
+
+const form = document.getElementById("auditForm");
+
+Object.entries(sections).forEach(([secName, secData], si) => {
+  const card = document.createElement("div");
+  card.className = "section-card";
+  card.style.animationDelay = (si * 0.08) + "s";
+
+  // Header
+  const header = document.createElement("div");
+  header.className = "section-header";
+
+  const iconEl = document.createElement("div");
+  iconEl.className = "section-icon";
+  iconEl.style.background = secData.color + "20";
+  iconEl.innerText = secData.icon;
+
+  const titleWrap = document.createElement("div");
+  const t = document.createElement("div");
+  t.className = "section-title";
+  t.innerText = secName;
+  const d = document.createElement("div");
+  d.className = "section-desc";
+  d.innerText = secData.desc;
+  titleWrap.appendChild(t);
+  titleWrap.appendChild(d);
+
+  header.appendChild(iconEl);
+  header.appendChild(titleWrap);
+  card.appendChild(header);
+
+  const body = document.createElement("div");
+  body.className = "section-body";
+
+  secData.questions.forEach((q, qi) => {
+    questionCount++;
+    const localCount = questionCount;
+    qMap.push({ section: secName });
+
+    const qDiv = document.createElement("div");
+    qDiv.className = "question";
+
+    const label = document.createElement("div");
+    label.className = "q-label";
+    label.innerHTML = `<span class="q-num">${localCount}</span>${q}`;
+    qDiv.appendChild(label);
+
+    const rangeLabels = document.createElement("div");
+    rangeLabels.className = "range-labels";
+    rangeLabels.innerHTML = '<span>1 — Healthy</span><span>10 — Critical Risk</span>';
+    qDiv.appendChild(rangeLabels);
+
+    const sliderWrap = document.createElement("div");
+    sliderWrap.className = "slider-wrap";
+
+    const input = document.createElement("input");
+    input.type = "range";
+    input.min = 1; input.max = 10; input.value = 5;
+    input.name = "q" + localCount;
+
+    const bubble = document.createElement("div");
+    bubble.className = "score-bubble";
+
+    function updateBubble(val) {
+      bubble.innerText = val;
+      if (val <= 3) {
+        bubble.style.background = "rgba(0,229,160,0.15)";
+        bubble.style.color = "#00e5a0";
+        input.style.background = "linear-gradient(to right, #00e5a0 " + ((val-1)/9*100) + "%, #1e3050 " + ((val-1)/9*100) + "%)";
+      } else if (val <= 6) {
+        bubble.style.background = "rgba(245,158,11,0.15)";
+        bubble.style.color = "#f59e0b";
+        input.style.background = "linear-gradient(to right, #f59e0b " + ((val-1)/9*100) + "%, #1e3050 " + ((val-1)/9*100) + "%)";
+      } else {
+        bubble.style.background = "rgba(239,68,68,0.15)";
+        bubble.style.color = "#ef4444";
+        input.style.background = "linear-gradient(to right, #ef4444 " + ((val-1)/9*100) + "%, #1e3050 " + ((val-1)/9*100) + "%)";
+      }
+      updateProgress();
+    }
+
+    updateBubble(5);
+    input.oninput = function() { updateBubble(parseInt(this.value)); };
+
+    sliderWrap.appendChild(input);
+    sliderWrap.appendChild(bubble);
+    qDiv.appendChild(sliderWrap);
+    body.appendChild(qDiv);
+  });
+
+  card.appendChild(body);
+  form.appendChild(card);
+});
+
+function updateProgress() {
+  const inputs = document.querySelectorAll("input[type='range']");
+  document.getElementById("progressFill").style.width = "100%";
+  document.getElementById("progressLabel").innerText = inputs.length + " / " + inputs.length;
+}
+
+// Init progress after DOM is built
+document.addEventListener("DOMContentLoaded", () => {
+  const inputs = document.querySelectorAll("input[type='range']");
+  document.getElementById("progressFill").style.width = "100%";
+  document.getElementById("progressLabel").innerText = inputs.length + " / " + inputs.length;
+});
+setTimeout(() => {
+  const inputs = document.querySelectorAll("input[type='range']");
+  document.getElementById("progressFill").style.width = "100%";
+  document.getElementById("progressLabel").innerText = inputs.length + " / " + inputs.length;
+}, 100);
+
+function calculateScore(e) {
+  e.preventDefault();
+
+  const inputs = document.querySelectorAll("input[type='range']");
+  let total = 0;
+  const sectionScores = {};
+  Object.keys(sections).forEach(s => sectionScores[s] = []);
+
+  inputs.forEach((input, i) => {
+    const val = parseInt(input.value);
+    total += val;
+    sectionScores[qMap[i].section].push(val);
+  });
+
+  const maxScore = inputs.length * 10;
+  const pct = ((total / maxScore) * 100).toFixed(1);
+
+  // Results
+  const resultsWrap = document.getElementById("resultsWrap");
+  resultsWrap.style.display = "block";
+  resultsWrap.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  // Ring
+  const circumference = 326.7;
+  const offset = circumference - (pct / 100) * circumference;
+  const ring = document.getElementById("ringFill");
+  const ringPct = document.getElementById("ringPct");
+
+  let ringColor, heroGrad, headline, summary;
+  if (pct <= 30) {
+    ringColor = "#00e5a0"; heroGrad = "rgba(0,229,160,0.06)";
+    headline = "🟢 Strong Systems — Minimal Bottlenecks";
+    summary = "Your business is running efficiently with solid foundations. Focus on continuous improvement and proactive optimisation to maintain this healthy trajectory.";
+  } else if (pct <= 60) {
+    ringColor = "#f59e0b"; heroGrad = "rgba(245,158,11,0.06)";
+    headline = "🟡 Moderate Risk — Optimisation Needed";
+    summary = "There are meaningful gaps in your systems that are likely costing you time and limiting growth. These are fixable — the right improvements could unlock significant capacity.";
+  } else {
+    ringColor = "#ef4444"; heroGrad = "rgba(239,68,68,0.06)";
+    headline = "🔴 High Risk — Founder Bottleneck Detected";
+    summary = "Your business is heavily dependent on you personally, which creates a ceiling on growth and a high burnout risk. Addressing these systems issues is urgent.";
+  }
+
+  ring.style.stroke = ringColor;
+  ring.style.strokeDashoffset = offset;
+  ringPct.style.color = ringColor;
+  ringPct.innerText = pct + "%";
+  document.getElementById("resultsHero").style.background = `radial-gradient(ellipse at center, ${heroGrad} 0%, transparent 70%)`;
+  document.getElementById("resultHeadline").innerText = headline;
+  document.getElementById("resultSummary").innerText = summary;
+
+  // Section cards
+  const grid = document.getElementById("resultsGrid");
+  grid.innerHTML = "";
+  const worstSection = { name: "", score: 0 };
+
+  Object.entries(sectionScores).forEach(([name, scores]) => {
+    const avg = scores.reduce((a,b) => a+b, 0) / scores.length;
+    const secPct = ((avg / 10) * 100).toFixed(0);
+    const secData = sections[name];
+
+    if (avg > worstSection.score) { worstSection.score = avg; worstSection.name = name; }
+
+    let cls, barColor, status;
+    if (avg <= 3.5) { cls = "green"; barColor = "#00e5a0"; status = "✓ Low Risk"; }
+    else if (avg <= 6.5) { cls = "yellow"; barColor = "#f59e0b"; status = "⚠ Moderate Risk"; }
+    else { cls = "red"; barColor = "#ef4444"; status = "✗ High Risk"; }
+
+    const card = document.createElement("div");
+    card.className = "result-card";
+    card.innerHTML = `
+      <div class="result-card-top">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:16px;">${secData.icon}</span>
+          <span class="result-card-name">${name}</span>
+        </div>
+        <span class="result-card-score bg-${cls === 'green' ? 'green' : cls === 'yellow' ? 'yellow' : 'red'} ${cls}">${avg.toFixed(1)}/10</span>
+      </div>
+      <div class="mini-bar-track">
+        <div class="mini-bar-fill" style="width:${secPct}%;background:${barColor};"></div>
+      </div>
+      <div class="result-card-status ${cls}">${status}</div>
+    `;
+    grid.appendChild(card);
+  });
+
+  // Personalised recommendations
+  const recs = generateRecs(sectionScores, pct);
+  const recsBody = document.getElementById("recsBody");
+  recsBody.innerHTML = recs.map(r => `
+    <div class="rec-item">
+      <div class="rec-icon">${r.icon}</div>
+      <div class="rec-text">
+        <h4>${r.title}</h4>
+        <p>${r.body}</p>
+      </div>
+    </div>
+  `).join("");
+}
+
+function generateRecs(sectionScores, pct) {
+  const recs = [];
+  const avg = (s) => sectionScores[s].reduce((a,b) => a+b, 0) / sectionScores[s].length;
+
+  if (avg("Founder Dependency") > 6) {
+    recs.push({ icon: "🔐", title: "Document & Delegate Your Core Decisions", body: "Create a simple decision tree or authority matrix so your team knows what they can resolve without you. Start with the 3 decisions you're asked most often." });
+  }
+  if (avg("Systems & Process Clarity") > 6) {
+    recs.push({ icon: "📝", title: "Build SOPs for Your Top 5 Processes", body: "Pick the 5 most repeated tasks in your business and document them step-by-step. Video walkthroughs count. Aim for clarity over perfection." });
+  }
+  if (avg("Delegation & Team Structure") > 6) {
+    recs.push({ icon: "🗂", title: "Clarify Roles with an Ownership Map", body: "Create a simple one-page document that shows who owns what. Every recurring task should have a single named owner — no shared ownership." });
+  }
+  if (avg("Automation & Efficiency") > 6) {
+    recs.push({ icon: "🤖", title: "Automate Your Top 3 Manual Workflows", body: "Identify the three most repetitive manual tasks (e.g. lead follow-up, onboarding, reminders) and map them to automation tools like Zapier, Make, or your CRM." });
+  }
+  if (avg("Scalability & Growth Ceiling") > 6) {
+    recs.push({ icon: "📊", title: "Create a Weekly Scorecard", body: "Pick 5–10 KPIs and review them every Monday. What gets measured gets managed. This single habit can shift you from reactive to strategic within weeks." });
+  }
+
+  if (recs.length === 0 && pct <= 30) {
+    recs.push({ icon: "🏆", title: "You're Ahead of Most Businesses", body: "Your systems are in solid shape. Focus now on automation and documentation to create true leverage — and review these systems quarterly as you scale." });
+    recs.push({ icon: "🚀", title: "Plan for Your Next Growth Stage", body: "Consider what breaks at 2x revenue. Map the processes, people, and tools you'd need, so you can grow proactively rather than reactively." });
+  }
+
+  if (pct > 60) {
+    recs.push({ icon: "🆘", title: "Start with a 90-Day Systems Sprint", body: "Don't try to fix everything at once. Pick your highest-risk category above and spend 90 days improving just that. Focused effort compounds fast." });
+  }
+
+  return recs;
+}
+
+function restart() {
+  document.getElementById("resultsWrap").style.display = "none";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+</script>
+</body>
+</html>
